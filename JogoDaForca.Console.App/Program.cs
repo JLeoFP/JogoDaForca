@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Reflection;
 using System.Security.Cryptography;
 
+/*Desafio 1: Validação, armazenamento e exibição de letras já digitadas
+Não permitir uso de letras já chutadas, também exibir as letras erradas.
 
+*/
 class Program
 {
     static void Main(string[] args)
@@ -93,6 +97,13 @@ class Program
         bool jogadorAcertouPalavra = false;
         bool jogadorPerdeu = false;
         int countErros = 0;
+        
+        // Arrays para letras chutadas y erradas
+
+        char[] letrasErradas = new char[26];
+        int countLetrasErradas = 0;
+        char[] letrasJaChutadas = new char[26];
+        int countLetrasJaChutadas = 0;
 
         while (!jogadorAcertouPalavra && !jogadorPerdeu)
         {
@@ -100,9 +111,44 @@ class Program
 
             Console.WriteLine("Letras acertadas: " + string.Join("", letrasAcertadas));
             Console.WriteLine("---------------------------------");
+            
+            //exibição de letras erradas.
+
+            if(countLetrasErradas > 0)
+            {
+                Console.Write("Letras erradas:");
+                for(int i = 0; i < countLetrasErradas; i++)
+                {
+                    Console.Write(letrasErradas[i]);
+                    if(i < countLetrasErradas - 1)
+                    {
+                        Console.Write(", ");
+                    }
+                }
+                Console.WriteLine();
+                
+            }
+
+            
             Console.WriteLine("Erros cometidos: " + countErros);
             Console.WriteLine("---------------------------------");
+            
+            // exibição de letras já digitadas
 
+            if(countLetrasJaChutadas > 0)
+            {
+                Console.Write("Letra ya usada: ");
+                for(int i=0; i < countLetrasJaChutadas; i++)
+                {
+                    Console.Write(letrasJaChutadas[i]);
+                    if(i < countLetrasJaChutadas - 1)
+                    {
+                        Console.Write(", ");
+                    }
+                }
+                Console.WriteLine();
+                Console.WriteLine("---------------------------------");
+            }
 
             Console.WriteLine("Digite uma letra: ");
             string? strLetra = Console.ReadLine();
@@ -113,6 +159,31 @@ class Program
                     continue;
                 }
             char letraChute = char.ToUpper(Convert.ToChar(strLetra));
+
+            //validar letra chutada.
+
+            bool letraRepetida = false; 
+
+            for(int i=0; i < countLetrasJaChutadas; i++)
+            {
+                if (letrasJaChutadas[i]== letraChute)
+                {
+                    letraRepetida = true;
+                    break;
+                }
+            }
+
+            if(letraRepetida)
+            {
+                Console.WriteLine("---------------------------------");
+                Console.WriteLine($"Voce ja tentou a letra {letraChute}! Tente outra.");
+                Console.WriteLine("---------------------------------");
+                Console.ReadLine();
+                continue;
+            }
+
+            letrasJaChutadas[countLetrasJaChutadas] = letraChute;
+            countLetrasJaChutadas++;
 
             bool letraEncontrada = false;
 
@@ -130,6 +201,8 @@ class Program
             if (letraEncontrada == false)
             {   
                 countErros++;
+                letrasErradas[countLetrasErradas] = letraChute;    //agreda al arrays de letras erradas
+                countLetrasErradas++;
             }
             
             jogadorAcertouPalavra = palavraSecreta == string.Join("", letrasAcertadas);            // Verificar se o jogador acertou a palavra   
